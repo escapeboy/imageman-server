@@ -57,18 +57,22 @@ fa.prepare(ctx_id=-1)
 print('buffalo_l ready')
 "
 
-echo "Downloading inswapper_128.onnx..."
+echo "Downloading inswapper_128.onnx (optional — face swap)..."
 python3 -c "
-import os
-from huggingface_hub import hf_hub_download
+import os, urllib.request
 dest = os.path.join('$MODEL_DIR', 'inswapper_128.onnx')
-if not os.path.exists(dest):
-    path = hf_hub_download('deepinsight/inswapper', filename='inswapper_128.onnx', cache_dir='$HF_HOME')
-    import shutil; shutil.copy(path, dest)
-    print('Downloaded inswapper_128.onnx')
-else:
+if os.path.exists(dest):
     print('Skipping inswapper_128.onnx (already exists)')
-"
+else:
+    try:
+        # facefusion public mirror
+        url = 'https://github.com/facefusion/facefusion-assets/releases/download/models-3.0.0/inswapper_128.onnx'
+        print(f'Downloading inswapper_128.onnx from facefusion-assets...')
+        urllib.request.urlretrieve(url, dest)
+        print('Downloaded inswapper_128.onnx')
+    except Exception as e:
+        print(f'Warning: inswapper download failed ({e}) — face swap will be unavailable')
+" || true
 
 echo "BiRefNet and LaMa: auto-downloaded at first inference."
 echo "All model downloads complete."
