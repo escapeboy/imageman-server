@@ -12,7 +12,10 @@ def get_nafnet():
     model_path = os.path.join(MODEL_DIR, "nafnet_reds.pth")
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"NAFNet model not found at {model_path}. Deploy with NAFNet weights to use deblur.")
-    from basicsr.models.archs.NAFNet_arch import NAFNet
+    try:
+        from basicsr.archs.NAFNet_arch import NAFNet
+    except ImportError:
+        from basicsr.models.archs.NAFNet_arch import NAFNet
     model = NAFNet(
         img_channel=3,
         width=64,
