@@ -28,13 +28,13 @@ def deblur(req: DeblurRequest):
         padded.paste(img, (0, 0))
 
         inp = torch.from_numpy(np.array(padded)).float() / 255.0
-        inp = inp.permute(2, 0, 1).unsqueeze(0).cuda().half()
+        inp = inp.permute(2, 0, 1).unsqueeze(0).cuda()  # fp32
 
         model = get_nafnet()
         with torch.no_grad():
             out = model(inp)
 
-        out = out.squeeze(0).permute(1, 2, 0).float().cpu().numpy()
+        out = out.squeeze(0).permute(1, 2, 0).cpu().numpy()
         out = (out * 255).clip(0, 255).astype(np.uint8)
         result = PILImage.fromarray(out).crop((0, 0, w, h))
         return {"result_image": image_to_b64(result)}
