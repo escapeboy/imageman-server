@@ -9,6 +9,9 @@ def get_nafnet():
     cached = registry.get("nafnet")
     if cached:
         return cached
+    model_path = os.path.join(MODEL_DIR, "nafnet_reds.pth")
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"NAFNet model not found at {model_path}. Deploy with NAFNet weights to use deblur.")
     from basicsr.models.archs.NAFNet_arch import NAFNet
     model = NAFNet(
         img_channel=3,
@@ -17,10 +20,7 @@ def get_nafnet():
         middle_blk_num=1,
         dec_blks=[1, 1, 1, 1],
     )
-    state = torch.load(
-        os.path.join(MODEL_DIR, "nafnet_reds.pth"),
-        map_location="cuda"
-    )
+    state = torch.load(model_path, map_location="cuda")
     model.load_state_dict(state["params"])
     model.train(False)
     model.cuda().half()
