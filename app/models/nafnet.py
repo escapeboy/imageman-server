@@ -16,9 +16,9 @@ def get_nafnet():
     model = NAFNet(
         img_channel=3,
         width=64,
-        enc_blks=[1, 1, 1, 28],
+        enc_blk_nums=[1, 1, 1, 28],
         middle_blk_num=1,
-        dec_blks=[1, 1, 1, 1],
+        dec_blk_nums=[1, 1, 1, 1],
     )
     state = torch.load(model_path, map_location="cuda")
     model.load_state_dict(state["params"])
